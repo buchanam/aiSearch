@@ -6,7 +6,6 @@ class Node:
 
     def __init__(self, data, parent, children):
         self.__data = data
-        print(self.__data)
         self.__parent = parent
         if children != None:
             for child in children:

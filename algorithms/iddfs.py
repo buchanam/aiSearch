@@ -1,10 +1,8 @@
 #!/usr/bin/env python
 
-# dfs for aiSearch 
-# run using: dfs.py initial_state_file goal_state_file mode output_file
+# iddfs for aiSearch 
+# run using: iddfs.py initial_state_file goal_state_file mode output_file
 # by Michaela Buchanan
-
-# TODO: fix tmp changing node.data
 
 import sys
 import os
@@ -17,8 +15,6 @@ initial_file = sys.argv[1]
 goal_file = sys.argv[2]
 mode = sys.argv[3]
 output_file = sys.argv[4]
-
-nc = 0
 
 def ExpandNodeDFS(fringe, node):
     # this is the tricky bit
@@ -42,7 +38,6 @@ def ExpandNodeDFS(fringe, node):
                 fringe.put(new_node)
                 # add new node to current node's children
                 node.AddChild(new_node)
-                print("1")
     else:
         #boat is on right side
         tmp = list(node.data)
@@ -61,7 +56,6 @@ def ExpandNodeDFS(fringe, node):
                 fringe.put(new_node)
                 # add new node to current node's children
                 node.AddChild(new_node)
-                print("1")
 
     # CASE 2: two chickens in boat
     # check which side boat is on
@@ -83,7 +77,6 @@ def ExpandNodeDFS(fringe, node):
                 fringe.put(new_node)
                 # add new node to current node's children
                 node.AddChild(new_node)
-                print("2")
     else:
         #boat is on right side
         tmp = list(node.data)
@@ -102,7 +95,6 @@ def ExpandNodeDFS(fringe, node):
                 fringe.put(new_node)
                 # add new node to current node's children
                 node.AddChild(new_node)
-                print("2")
 
     # CASE 3: one wolf in boat
     # check which side boat is on
@@ -124,7 +116,6 @@ def ExpandNodeDFS(fringe, node):
                 fringe.put(new_node)
                 # add new node to current node's children
                 node.AddChild(new_node)
-                print("3")
     else:
         #boat is on right side
         tmp = list(node.data)
@@ -143,7 +134,6 @@ def ExpandNodeDFS(fringe, node):
                 fringe.put(new_node)
                 # add new node to current node's children
                 node.AddChild(new_node)
-                print("3")
 
     # CASE 4: one wolf one chicken
     # check which side boat is on
@@ -167,7 +157,6 @@ def ExpandNodeDFS(fringe, node):
                 fringe.put(new_node)
                 # add new node to current node's children
                 node.AddChild(new_node)
-                print("4")
     else:
         #boat is on right side
         tmp = list(node.data)
@@ -188,7 +177,6 @@ def ExpandNodeDFS(fringe, node):
                 fringe.put(new_node)
                 # add new node to current node's children
                 node.AddChild(new_node)
-                print("4")
 
     # CASE 5: two wolves in boat
     # check which side boat is on
@@ -210,7 +198,6 @@ def ExpandNodeDFS(fringe, node):
                 fringe.put(new_node)
                 # add new node to current node's children
                 node.AddChild(new_node)
-                print("5")
     else:
         #boat is on right side
         tmp = list(node.data)
@@ -229,10 +216,9 @@ def ExpandNodeDFS(fringe, node):
                 fringe.put(new_node)
                 # add new node to current node's children
                 node.AddChild(new_node)
-                print("5")
 
 # let's do some searching - based off of pseudocode from lecture slides
-def GraphSearch(initial_data, goal_data):
+def GraphSearch(initial_data, goal_data, depth_lim):
     # initialize closed as hash table (dict))
     closed = []
 
@@ -247,14 +233,24 @@ def GraphSearch(initial_data, goal_data):
     while searching:
         # if we run out of options without finding solution
         if fringe.empty():
-            print("Ran out")
             searching = False
 
         else:
             # pop off top node to play with
             target_node = fringe.get()
 
-            if list(target_node.data) == goal_data:
+            # check if depth is within limit given for this round
+            node_depth = 0
+            parent_node = target_node
+            while(parent_node.parent != None):
+                node_depth += 1
+                parent_node = parent_node.parent
+
+            if (node_depth >= depth_lim):
+                searching = False
+                result = -1
+
+            elif list(target_node.data) == goal_data:
                 result = target_node
                 searching = False
 
@@ -271,18 +267,27 @@ def GraphSearch(initial_data, goal_data):
 # get data from input into list of form lC, lW, lB, rC, rW, rB
 initial_data = [None] * 6
 goal_data = [None] * 6
+depth_limit = 0
 
 GetVals(initial_data, initial_file)
 GetVals(goal_data, goal_file)
 
-# run bf graph search on data
-result = GraphSearch(initial_data, goal_data)
+result = -1
+
+global nc
+nc = 0
+
+# run until a solution is found or you run out of nodes
+while result == -1:
+    # run iddf graph search on data
+    result = GraphSearch(initial_data, goal_data, depth_limit)
+    depth_limit += 1
 
 # display result 
 if result == 0:
     print("No solution was found :(")
 
-else:
+elif result != -1:
     print("Found solution! :D")
 
     # open output file
@@ -300,7 +305,6 @@ else:
         print("%s: %s " % (x,move))
         f.write("%s: %s " % (x,move) + "\n")
 
-    global nc
     print("Number of expanded nodes: %s" % nc)
     f.write("Number of expanded nodes: %s" % nc)
 
