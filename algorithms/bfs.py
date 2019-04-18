@@ -4,6 +4,8 @@
 # run using: bfs.py initial_state_file goal_state_file mode output_file
 # by Michaela Buchanan
 
+# TODO: fix tmp changing node.data
+
 import sys
 import os
 import heapq
@@ -18,19 +20,17 @@ output_file = sys.argv[4]
 
 def ExpandNodeBFS(fringe, node):
     # this is the tricky bit
-    print(node.data)
     # CASE 1: one chicken in boat
     # check which side boat is on
     if (node.data[2] == 1):
-        print("1i")
         #boat is on left side
-        tmp = node.Data()
+        tmp = list(node.data)
         if (tmp[0] >= 1):
             # check that there are chickens to move
             tmp[0] -= 1
             tmp[3] += 1
             # check wolf condition
-            if tmp[0] > tmp[1] and tmp[3] > tmp[4]:
+            if (tmp[0] == 0 and tmp[3] >= tmp[4]) or (tmp[3] == 0 and tmp[0] >= tmp[1]) or (tmp[0] >= tmp[1] and tmp[3] >= tmp[4]):
                 # all good, create node
                 # switch boat
                 tmp[2] = 0
@@ -39,20 +39,17 @@ def ExpandNodeBFS(fringe, node):
                 new_node = Node(tmp, node, None)
                 heapq.heappush(fringe, new_node)
                 # add new node to current node's children
-                node.AddChildren(new_node)
+                node.AddChild(new_node)
+                print("1")
     else:
-        #print("1e")
         #boat is on right side
-        tmp = node.Data()
+        tmp = list(node.data)
         if (tmp[3] >= 1):
             # check that there are chickens to move
-            print("enough chickens")
             tmp[3] -= 1
             tmp[0] += 1
-            print(node.data)
             # check wolf condition
-            if tmp[0] > tmp[1] and tmp[3] > tmp[4]:
-                print("good on wolves")
+            if (tmp[0] == 0 and tmp[3] >= tmp[4]) or (tmp[3] == 0 and tmp[0] >= tmp[1]) or (tmp[0] >= tmp[1] and tmp[3] >= tmp[4]):
                 # all good, create node
                 # switch boat
                 tmp[2] = 1
@@ -61,21 +58,20 @@ def ExpandNodeBFS(fringe, node):
                 new_node = Node(tmp, node, None)
                 heapq.heappush(fringe, new_node)
                 # add new node to current node's children
-                node.AddChildren(new_node)
-                tmp = None
+                node.AddChild(new_node)
+                print("1")
 
     # CASE 2: two chickens in boat
     # check which side boat is on
     if (node.data[2] == 1):
-        print("2i")
         #boat is on left side
-        tmp = node.Data()
+        tmp = list(node.data)
         if (tmp[0] >= 2):
             # check that there are chickens to move
             tmp[0] -= 2
             tmp[3] += 2
             # check wolf condition
-            if tmp[0] > tmp[1] and tmp[3] > tmp[4]:
+            if (tmp[0] == 0 and tmp[3] >= tmp[4]) or (tmp[3] == 0 and tmp[0] >= tmp[1]) or (tmp[0] >= tmp[1] and tmp[3] >= tmp[4]):
                 # all good, create node
                 # switch boat
                 tmp[2] = 0
@@ -84,17 +80,17 @@ def ExpandNodeBFS(fringe, node):
                 new_node = Node(tmp, node, None)
                 heapq.heappush(fringe, new_node)
                 # add new node to current node's children
-                node.AddChildren(new_node)
+                node.AddChild(new_node)
+                print("2")
     else:
-        print(tmp)
         #boat is on right side
-        tmp = node.Data()
+        tmp = list(node.data)
         if (tmp[3] >= 2):
             # check that there are chickens to move
-            tmp[3] -= 1
-            tmp[0] += 1
+            tmp[3] -= 2
+            tmp[0] += 2
             # check wolf condition
-            if tmp[0] > tmp[1] and tmp[3] > tmp[4]:
+            if (tmp[0] == 0 and tmp[3] >= tmp[4]) or (tmp[3] == 0 and tmp[0] >= tmp[1]) or (tmp[0] >= tmp[1] and tmp[3] >= tmp[4]):
                 # all good, create node
                 # switch boat
                 tmp[2] = 1
@@ -103,21 +99,20 @@ def ExpandNodeBFS(fringe, node):
                 new_node = Node(tmp, node, None)
                 heapq.heappush(fringe, new_node)
                 # add new node to current node's children
-                node.AddChildren(new_node)
-                tmp = None
+                node.AddChild(new_node)
+                print("2")
 
     # CASE 3: one wolf in boat
     # check which side boat is on
     if (node.data[2] == 1):
         #boat is on left side
-        tmp = node.Data()
-        print(tmp)
+        tmp = list(node.data)
         if (tmp[1] >= 1):
             # check that there are wolves to move
             tmp[1] -= 1
             tmp[4] += 1
             # check wolf condition
-            if tmp[0] > tmp[1] and tmp[3] > tmp[4]:
+            if (tmp[0] == 0 and tmp[3] >= tmp[4]) or (tmp[3] == 0 and tmp[0] >= tmp[1]) or (tmp[0] >= tmp[1] and tmp[3] >= tmp[4]):
                 # all good, create node
                 # switch boat
                 tmp[2] = 0
@@ -126,21 +121,17 @@ def ExpandNodeBFS(fringe, node):
                 new_node = Node(tmp, node, None)
                 heapq.heappush(fringe, new_node)
                 # add new node to current node's children
-                node.AddChildren(new_node)
-                print("Added in 3")
+                node.AddChild(new_node)
+                print("3")
     else:
         #boat is on right side
-        tmp = node.Data()
-        print(tmp)
+        tmp = list(node.data)
         if (tmp[4] >= 1):
             # check that there are wolves to move
             tmp[4] -= 1
             tmp[1] += 1
-            print("before wolves")
-            #print(tmp)
             # check wolf condition
-            if (tmp[0] == 0 and tmp[3] > tmp[4]) or (tmp[3] == 0 and tmp[0] > tmp[1]) or (tmp[0] > tmp[1] and tmp[3] > tmp[4]):
-                print("good on wolves in 4e")
+            if (tmp[0] == 0 and tmp[3] >= tmp[4]) or (tmp[3] == 0 and tmp[0] >= tmp[1]) or (tmp[0] >= tmp[1] and tmp[3] >= tmp[4]):
                 # all good, create node
                 # switch boat
                 tmp[2] = 1
@@ -149,14 +140,14 @@ def ExpandNodeBFS(fringe, node):
                 new_node = Node(tmp, node, None)
                 heapq.heappush(fringe, new_node)
                 # add new node to current node's children
-                node.AddChildren(new_node)
-                print("Added in 3")
+                node.AddChild(new_node)
+                print("3")
 
     # CASE 4: one wolf one chicken
     # check which side boat is on
     if (node.data[2] == 1):
         #boat is on left side
-        tmp = node.data
+        tmp = list(node.data)
         if (tmp[0] >= 1 and tmp[1] >= 1):
             # check that there are wolves and chickens to move
             tmp[0] -= 1
@@ -164,7 +155,7 @@ def ExpandNodeBFS(fringe, node):
             tmp[1] -= 1
             tmp[4] += 1
             # check wolf condition
-            if tmp[0] > tmp[1] and tmp[3] > tmp[4]:
+            if (tmp[0] == 0 and tmp[3] >= tmp[4]) or (tmp[3] == 0 and tmp[0] >= tmp[1]) or (tmp[0] >= tmp[1] and tmp[3] >= tmp[4]):
                 # all good, create node
                 # switch boat
                 tmp[2] = 0
@@ -173,10 +164,11 @@ def ExpandNodeBFS(fringe, node):
                 new_node = Node(tmp, node, None)
                 heapq.heappush(fringe, new_node)
                 # add new node to current node's children
-                node.AddChildren(new_node)
+                node.AddChild(new_node)
+                print("4")
     else:
         #boat is on right side
-        tmp = node.data
+        tmp = list(node.data)
         if (tmp[3] >= 1 and tmp[4] >= 1):
             # check that there are wolves and chickens to move
             tmp[4] -= 1
@@ -184,7 +176,7 @@ def ExpandNodeBFS(fringe, node):
             tmp[3] -= 1
             tmp[0] += 1
             # check wolf condition
-            if tmp[0] > tmp[1] and tmp[3] > tmp[4]:
+            if (tmp[0] == 0 and tmp[3] >= tmp[4]) or (tmp[3] == 0 and tmp[0] >= tmp[1]) or (tmp[0] >= tmp[1] and tmp[3] >= tmp[4]):
                 # all good, create node
                 # switch boat
                 tmp[2] = 1
@@ -193,19 +185,20 @@ def ExpandNodeBFS(fringe, node):
                 new_node = Node(tmp, node, None)
                 heapq.heappush(fringe, new_node)
                 # add new node to current node's children
-                node.AddChildren(new_node)
+                node.AddChild(new_node)
+                print("4")
 
     # CASE 5: two wolves in boat
     # check which side boat is on
     if (node.data[2] == 1):
         #boat is on left side
-        tmp = node.data
+        tmp = list(node.data)
         if (tmp[1] >= 2):
             # check that there are wolves to move
             tmp[1] -= 2
             tmp[4] += 2
             # check wolf condition
-            if tmp[0] > tmp[1] and tmp[3] > tmp[4]:
+            if (tmp[0] == 0 and tmp[3] >= tmp[4]) or (tmp[3] == 0 and tmp[0] >= tmp[1]) or (tmp[0] >= tmp[1] and tmp[3] >= tmp[4]):
                 # all good, create node
                 # switch boat
                 tmp[2] = 0
@@ -214,16 +207,17 @@ def ExpandNodeBFS(fringe, node):
                 new_node = Node(tmp, node, None)
                 heapq.heappush(fringe, new_node)
                 # add new node to current node's children
-                node.AddChildren(new_node)
+                node.AddChild(new_node)
+                print("5")
     else:
         #boat is on right side
-        tmp = node.data
+        tmp = list(node.data)
         if (tmp[4] >= 2):
             # check that there are wolves to move
             tmp[4] -= 2
             tmp[1] += 2
             # check wolf condition
-            if tmp[0] > tmp[1] and tmp[3] > tmp[4]:
+            if (tmp[0] == 0 and tmp[3] >= tmp[4]) or (tmp[3] == 0 and tmp[0] >= tmp[1]) or (tmp[0] >= tmp[1] and tmp[3] >= tmp[4]):
                 # all good, create node
                 # switch boat
                 tmp[2] = 1
@@ -232,7 +226,8 @@ def ExpandNodeBFS(fringe, node):
                 new_node = Node(tmp, node, None)
                 heapq.heappush(fringe, new_node)
                 # add new node to current node's children
-                node.AddChildren(new_node)
+                node.AddChild(new_node)
+                print("5")
 
 # let's do some searching - based off of pseudocode from lecture slides
 def GraphSearch(initial_data, goal_data, nc):
@@ -251,21 +246,20 @@ def GraphSearch(initial_data, goal_data, nc):
     while searching:
         # if we run out of options without finding solution
         if len(fringe) == 0:
+            print("Ran out")
             searching = False
 
         else:
-            print("HI")
             # pop off top node to play with
             target_node = heapq.heappop(fringe)
 
-            if target_node.data == goal_data:
+            if list(target_node.data) == goal_data:
                 result = target_node
                 searching = False
 
             # TODO: Make sure this actually does the equality right
-            elif target_node not in closed:
-                closed.append(target_node)
-                print("Going to expand")
+            elif target_node.data not in closed:
+                closed.append(target_node.data)
                 ExpandNodeBFS(fringe, target_node)
 
     return result
