@@ -277,17 +277,22 @@ result = -1
 global nc
 nc = 0
 
+# CHANGE MAX DEPTH HERE
+max_depth = 600
+
 # run until a solution is found or you run out of nodes
 while result == -1:
-    # run iddf graph search on data
-    result = GraphSearch(initial_data, goal_data, depth_limit)
-    depth_limit += 1
+    if depth_limit >= max_depth:
+        result = -2
+    else:
+        result = GraphSearch(initial_data, goal_data, depth_limit)
+        depth_limit += 1
 
 # display result 
 if result == 0:
     print("No solution was found :(")
 
-elif result != -1:
+elif result != -1 and result != -2:
     print("Found solution! :D")
 
     # open output file
@@ -309,3 +314,6 @@ elif result != -1:
     f.write("Number of expanded nodes: %s" % nc)
 
     f.close()
+
+elif result == -2:
+    print("Went to max depth of %s and didn't find a solution :/" % max_depth)
