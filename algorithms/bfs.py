@@ -286,6 +286,10 @@ if result == 0:
 
 else:
     print("Found solution! :D")
+
+    # open output file
+    f = open(output_file, "w+")
+
     path_list = []
     while result.parent != None:
         path_list.append(result.data)
@@ -296,6 +300,10 @@ else:
     for move in flipped_boi:
         x += 1
         print("%s: %s " % (x,move))
+        f.write("%s: %s " % (x,move) + "\n")
 
     global nc
     print("Number of expanded nodes: %s" % nc)
+    f.write("Number of expanded nodes: %s" % nc)
+
+    f.close()
