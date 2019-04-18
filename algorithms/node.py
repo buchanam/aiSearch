@@ -2,13 +2,12 @@
 
 class Node:
     'Class for node objects used for GraphSort'
-    parent = None
     children = [None]
 
     def __init__(self, data, parent, children):
         self.__data = data
         print(self.__data)
-        self.parent = parent
+        self.__parent = parent
         if children != None:
             for child in children:
                 self.children.append(child)
@@ -19,3 +18,7 @@ class Node:
     @property
     def data(self):
         return self.__data
+
+    @property
+    def parent(self):
+        return self.__parent

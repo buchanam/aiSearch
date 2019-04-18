@@ -18,6 +18,8 @@ goal_file = sys.argv[2]
 mode = sys.argv[3]
 output_file = sys.argv[4]
 
+nc = 0
+
 def ExpandNodeBFS(fringe, node):
     # this is the tricky bit
     # CASE 1: one chicken in boat
@@ -230,7 +232,7 @@ def ExpandNodeBFS(fringe, node):
                 print("5")
 
 # let's do some searching - based off of pseudocode from lecture slides
-def GraphSearch(initial_data, goal_data, nc):
+def GraphSearch(initial_data, goal_data):
     # initialize closed as hash table (dict))
     closed = []
 
@@ -260,6 +262,8 @@ def GraphSearch(initial_data, goal_data, nc):
             # TODO: Make sure this actually does the equality right
             elif target_node.data not in closed:
                 closed.append(target_node.data)
+                global nc
+                nc += 1
                 ExpandNodeBFS(fringe, target_node)
 
     return result
@@ -274,8 +278,7 @@ GetVals(initial_data, initial_file)
 GetVals(goal_data, goal_file)
 
 # run bf graph search on data
-node_counter = 0
-result = GraphSearch(initial_data, goal_data, node_counter)
+result = GraphSearch(initial_data, goal_data)
 
 # display result 
 if result == 0:
@@ -283,3 +286,16 @@ if result == 0:
 
 else:
     print("Found solution! :D")
+    path_list = []
+    while result.parent != None:
+        path_list.append(result.data)
+        result = result.parent
+
+    flipped_boi = path_list[::-1]
+    x = 0
+    for move in flipped_boi:
+        x += 1
+        print("%s: %s " % (x,move))
+
+    global nc
+    print("Number of expanded nodes: %s" % nc)
