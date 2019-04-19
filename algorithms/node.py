@@ -34,7 +34,6 @@ class Node:
         for y in range(0, x):
             total += abs(self.__data[y] - goal[y])
         # cost total
-
         parent_node = self.__parent
         while (parent_node != None):
             total += 1

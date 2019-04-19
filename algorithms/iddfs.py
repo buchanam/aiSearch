@@ -278,7 +278,7 @@ global nc
 nc = 0
 
 # CHANGE MAX DEPTH HERE
-max_depth = 600
+max_depth = 1000
 
 # run until a solution is found or you run out of nodes
 while result == -1:
